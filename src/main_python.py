@@ -1,9 +1,11 @@
+import pathlib
+
 from pydriller import Repository
 from datetime import datetime
 import re
 import json
 import os
-import cld3
+import gcld3
 
 import ast_tree
 from tree_sitter import Language, Parser
@@ -18,8 +20,8 @@ query = 'language:Python fork:false pushed:>2021-12-31 stars:>1000 org:facebook'
 
 repos = list_all_repos.get_all_repos(query, 200)
 methods = ()
-save_path = "/nfs/semeru/semeru_datasets/galeras_curated_raw_V3/{}/{}"
-save_path1 = "/nfs/semeru/semeru_datasets/galeras_curated_raw_V3/{}"
+save_path = "./out1/{}/{}"
+save_path1 = "./out1/{}"
 
 
 #'/scratch/danielrc/dataset_extractor/repos/{}'.format(repo_name)
@@ -168,15 +170,18 @@ class GithubMiningManager():
 
     def save(self, name, data):           
         if not os.path.exists(save_path1.format(self.repo_name)):
-            os.mkdir(save_path1.format(self.repo_name))
+            pathlib.Path(save_path1.format(self.repo_name)).mkdir(parents=True)
         with open(save_path.format(self.repo_name,name), 'w') as f:
             print("saving data")
             json.dump(data, f, ensure_ascii=False, indent=4)
             
     def documentation_object(self,docstring):
-        lan = cld3.get_language(docstring)
         if docstring is None:
             return {}
+
+        identifier = gcld3.NNetLanguageIdentifier(min_num_bytes=0, max_num_bytes=1000)
+        lan = identifier.FindLanguage(docstring)
+
         words = docstring.split()
         language = lan.language
         if lan.probability < 0.9: #not reliable

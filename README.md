@@ -1,6 +1,16 @@
 # galeras-dataset
 
 
+```
+python -m venv create venv
+venv/bin/activate
+python -m pip install -r requirements.txt
+mkdir out1
+python src/download_grammars.py
+python src/main_python.py
+```
+
+
 ### Steps to follow
 1. Execute download_grammars.py to get the tree sitter gramar in this case for python.
 2. Tune the main python file line 11 with the project name to analyse.

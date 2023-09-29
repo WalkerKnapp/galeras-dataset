@@ -38,4 +38,4 @@ def download_grammars(
         langs
     )
 
-download_grammars(["java"])
+download_grammars(["java", "python"])
